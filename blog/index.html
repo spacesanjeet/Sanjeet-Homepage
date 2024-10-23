@@ -1,56 +1,77 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Blog - Sanjeet's Homepage</title>
-		<meta charset = "utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<link rel="stylesheet" href="../css/simple.css">
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	</head>
+  <head>
+    <title>Blog - Sanjeet's Homepage</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../css/simple.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  </head>
 
-	<body>
-		<header>
-			<nav>
-    			<a href="../index.html">Home</a>
-    			<a href="index.html" aria-current="page">Blog</a>
-    			<a href="../about.html">About</a>
-    			<a href="../resume.html">Resume</a>
-    			<a href="../youtube.html">YouTube</a>
-  			</nav>
-			<h1>Sanjeet's Blog!</h1>
-		</header>
+  <body>
+    <header>
+      <nav>
+          <a href="../index.html">Home</a>
+          <a href="index.html" aria-current="page">Blog</a>
+          <a href="../about.html">About</a>
+          <a href="../resume.html">Resume</a>
+          <a href="../youtube.html">YouTube</a>
+        </nav>
+      <h1>Sanjeet's Blog!</h1>
+    </header>
 
-		<main>
-			<article>
-				<img src = "../images/gevra.jpg" alt = "India's largest coal mine, Gevra Coal Mines (SECL)">
-    			<h2>
-      				<a href="2024-10-14-is-it-too-late.html">
-        				Is it too late?
-      				</a>
-    			</h2>
-    			<mark><time datetime="2024-10-14">October 14, 2024</time></mark>
-    			<p>
-      				Discussing the climate change and it's deniers and ignorants while asking the all important question: <strong>Is it too late?</strong>
-    			</p>
-  			</article>
-			<article>
-    			<h2>
-      				<a href="2024-10-12-firstpost.html">
-        				First Post on the Blog!
-      				</a>
-    			</h2>
-    			<mark><time datetime="2024-10-12">October 12, 2024</time></mark>
-    			<p>
-      				This is the first blog post on this site created by me from scratch. This site is created following the book tutorial <strong>HTML for People</strong>.
-    			</p>
-  			</article>
-		</main>
+    <main id="blog-posts">
+      <!-- Blog posts will be dynamically inserted here -->
+    </main>
 
-		<footer>
-    		<p>Made with ❤️ by Sanjeet Patel.</p>
-  		</footer>
-	</body>
+    <footer>
+        <p>Made with ❤️ by Sanjeet Patel.</p>
+      </footer>
+
+    <script>
+      async function fetchBlogPosts() {
+        try {
+          const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://astrosanjeet.wordpress.com/feed');
+          const data = await response.json();
+
+          // Log the fetched data
+          console.log('Fetched data:', data);
+
+          const blogPostsContainer = document.getElementById("blog-posts");
+
+          data.items.forEach((post, index) => {
+            const article = document.createElement("article");
+
+            const titleElement = document.createElement("h2");
+            const titleLink = document.createElement("a");
+            titleLink.href = `blogfeed.html?id=${index}`;
+            titleLink.textContent = post.title;
+            titleElement.appendChild(titleLink);
+            
+            const dateElement = document.createElement("mark");
+            const timeElement = document.createElement("time");
+            timeElement.dateTime = post.pubDate; // Use the publication date
+            timeElement.textContent = new Date(post.pubDate).toLocaleDateString(); // Format the date
+            dateElement.appendChild(timeElement);
+
+            const descriptionElement = document.createElement("p");
+            descriptionElement.textContent = post.description;
+
+            article.appendChild(titleElement);
+            article.appendChild(dateElement);
+            article.appendChild(descriptionElement);
+
+            blogPostsContainer.appendChild(article);
+          });
+        } catch (error) {
+          console.error('Error fetching blog posts:', error);
+        }
+      }
+
+      fetchBlogPosts();
+    </script>
+  </body>
 </html>

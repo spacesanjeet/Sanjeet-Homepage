@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Blog Post - Sanjeet's Homepage</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../css/simple.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <header>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="index.html" aria-current="page">Blog</a>
+        <a href="../about.html">About</a>
+        <a href="../resume.html">Resume</a>
+        <a href="../youtube.html">YouTube</a>
+      </nav>
+      <h1>Sanjeet's Blog!</h1>
+    </header>
+
+    <main>
+      <article id="post-content">
+        <h2 id="post-title"></h2>
+        <p id="post-description"></p>
+        <img id="featured-image" src="" alt="Featured Image" style="max-width: 100%; height: auto; display: none;">
+        <div id="post-full-content"></div>
+      </article>
+      <a href="index.html" class="button">&larr; Back to the blog</a>
+    </main>
+
+    <footer>
+      <p>Made with ❤️ by Sanjeet Patel.</p>
+    </footer>
+
+    <script>
+      async function fetchPostContent() {
+        try {
+          const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://astrosanjeet.wordpress.com/feed');
+          const data = await response.json();
+          
+          // Log the fetched data
+          console.log('Fetched data:', data);
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const postId = urlParams.get('id');
+          
+          console.log('Post ID from URL:', postId);
+
+          if (postId !== null && postId < data.items.length) {
+            const post = data.items[postId];
+            console.log('Post to display:', post);
+
+            // Display post details
+            document.getElementById("post-title").textContent = post.title;
+            document.getElementById("post-description").textContent = post.description;
+            document.getElementById("post-full-content").innerHTML = post.content;
+
+            // Check for and display the featured image if it exists
+            if (post.enclosure && post.enclosure.link) {
+              const featuredImage = document.getElementById("featured-image");
+              featuredImage.src = post.enclosure.link;
+              featuredImage.style.display = "block"; // Show the image
+            }
+          } else {
+            console.error('Invalid post ID or post not found.');
+            document.getElementById("post-content").innerHTML = "<p>Post not found.</p>";
+          }
+        } catch (error) {
+          console.error('Error fetching WordPress post:', error);
+          document.getElementById("post-content").innerHTML = "<p>Error loading post.</p>";
+        }
+      }
+
+      fetchPostContent();
+    </script>
+  </body>
+</html>
